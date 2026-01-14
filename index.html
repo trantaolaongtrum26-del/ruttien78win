@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao diện Rút Tiền - Đầy đủ dữ liệu</title>
+    <title>Giao diện Rút Tiền - Logic Hoàn Chỉnh</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -255,11 +255,16 @@
 
     <script>
         // --- 1. CONFIG & UTILS ---
-        let currentBalanceVND = 70628357.46;
+        // SỬA: Cập nhật số tiền khớp với HTML bạn cung cấp (70,628,357.46)
+        let currentBalanceVND = 70628357.46; 
         const exchangeRate = 26.67;
         const currencySelect = document.getElementById('currency-select');
         const amountInput = document.getElementById('amount-input');
         const totalText = document.getElementById('total-text');
+        const networkWrapper = document.getElementById('network-wrapper');
+        const rateText = document.getElementById('rate-text');
+        const amountUnit = document.getElementById('amount-unit');
+        const penaltyFooterText = document.getElementById('penalty-footer-text');
         
         function formatMoney(num) {
             return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -278,7 +283,7 @@
                    future.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
-        // --- 2. UPDATE UI ---
+        // --- 2. UPDATE UI (Tự động cập nhật số dư và placeholder khi load) ---
         function updateUI() {
             document.getElementById('sidebar-balance').innerText = formatMoney(currentBalanceVND);
             const helperText = document.getElementById('helper-text');
@@ -318,7 +323,8 @@
 
             let amountToDeductVND = (currency === 'USDT') ? inputValue * exchangeRate : inputValue;
 
-            if (amountToDeductVND > currentBalanceVND + 0.01) {
+            // Fix logic so sánh số thực
+            if (amountToDeductVND > currentBalanceVND + 0.1) {
                 alert("Số dư không đủ!");
                 return;
             }
@@ -328,6 +334,7 @@
             addHistoryRow(inputValue, currency);
             document.getElementById('success-popup').classList.remove('hidden');
             
+            // Reset Form sau khi rút
             amountInput.value = '';
             totalText.innerText = (currency === 'USDT') ? "≈ 0.00 USDT" : "0.00 VND(k)";
             amountInput.classList.remove('border-red-400', 'bg-red-50');
@@ -358,11 +365,6 @@
         }
 
         // --- 6. TAB SWITCH LOGIC ---
-        const networkWrapper = document.getElementById('network-wrapper');
-        const rateText = document.getElementById('rate-text');
-        const amountUnit = document.getElementById('amount-unit');
-        const penaltyFooterText = document.getElementById('penalty-footer-text');
-
         currencySelect.addEventListener('change', function() {
             amountInput.value = '';
             totalText.innerText = this.value === 'USDT' ? "≈ 0.00 USDT" : "0.00 VND(k)";
@@ -398,6 +400,9 @@
         document.getElementById('btn-close-popup').addEventListener('click', () => {
             document.getElementById('success-popup').classList.add('hidden');
         });
+
+        // Chạy updateUI ngay khi tải trang để hiển thị đúng số tiền lớn
+        updateUI();
     </script>
 </body>
 </html>
