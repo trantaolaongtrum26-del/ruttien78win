@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao diện Rút Tiền - Logic Hoàn Chỉnh</title>
+    <title>Giao diện Rút Tiền - 3 Tỷ & Auto Duyệt</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -12,7 +12,6 @@
             background-color: #f8f9fa;
         }
         
-        /* Custom scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
@@ -28,7 +27,6 @@
         }
         .animate-popup { animation: fadeIn 0.2s ease-out forwards; }
         
-        /* Hiệu ứng dòng mới trong bảng */
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); background-color: #fffbeb; }
             to { opacity: 1; transform: translateY(0); background-color: white; }
@@ -43,7 +41,7 @@
             <h1 class="text-xl font-bold text-black mb-6 pl-1">15w1900</h1>
             <div class="flex justify-between items-center py-3 border-b border-gray-100">
                 <span class="text-gray-600">VND(k)</span>
-                <span id="sidebar-balance" class="text-black font-bold">70,628,357.46</span>
+                <span id="sidebar-balance" class="text-black font-bold">...</span>
             </div>
             <div class="flex justify-between items-center py-3 border-b border-gray-100">
                 <div class="flex items-center gap-1">
@@ -75,7 +73,7 @@
             <div class="bg-white rounded shadow-[0_1px_3px_rgba(0,0,0,0.1)] mb-8">
                 <div class="flex justify-between items-center px-6 py-5 border-b border-gray-100">
                     <h2 class="text-lg font-bold text-gray-800">Điều Kiện Rút Tiền</h2>
-                    <button class="text-gray-400 hover:text-blue-500 transition"><i class="fa-solid fa-arrows-rotate text-lg"></i></button>
+                    <button onclick="resetData()" class="text-gray-400 hover:text-blue-500 transition" title="Reset dữ liệu về mặc định"><i class="fa-solid fa-arrows-rotate text-lg"></i></button>
                 </div>
                 
                 <div class="p-6">
@@ -92,56 +90,7 @@
                                 </tr>
                             </thead>
                             <tbody id="history-table-body" class="text-gray-700">
-                                
-                                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
-                                        <div>Thời gian từ : 11:29:27 02/01/2026</div>
-                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
-                                    </td>
-                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
-                                    <td class="py-4 text-center">-</td>
-                                    <td class="py-4 text-center">63.05</td>
-                                    <td class="py-4 text-center text-gray-500 text-[13px]">60.000.000 / -</td>
-                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
-                                </tr>
-
-                                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
-                                        <div>Thời gian từ : 11:17:57 28/12/2025</div>
-                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
-                                    </td>
-                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
-                                    <td class="py-4 text-center">-</td>
-                                    <td class="py-4 text-center">408.19</td>
-                                    <td class="py-4 text-center text-gray-500 text-[13px]">4,850.00 / -</td>
-                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
-                                </tr>
-
-                                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
-                                        <div>Thời gian từ : 11:14:47 27/12/2025</div>
-                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
-                                    </td>
-                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
-                                    <td class="py-4 text-center">-</td>
-                                    <td class="py-4 text-center">155.87</td>
-                                    <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
-                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
-                                </tr>
-
-                                <tr class="border-b border-gray-50 hover:bg-gray-50">
-                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
-                                        <div>Thời gian từ : 08:30:15 20/12/2025</div>
-                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
-                                    </td>
-                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
-                                    <td class="py-4 text-center">-</td>
-                                    <td class="py-4 text-center">1,250.00</td>
-                                    <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
-                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
-                                </tr>
-
-                            </tbody>
+                                </tbody>
                         </table>
                     </div>
                     
@@ -254,18 +203,40 @@
     </main>
 
     <script>
-        // --- 1. CONFIG & UTILS ---
-        // SỬA: Cập nhật số tiền khớp với HTML bạn cung cấp (70,628,357.46)
-        let currentBalanceVND = 70628357.46; 
-        const exchangeRate = 26.67;
-        const currencySelect = document.getElementById('currency-select');
+        // --- 1. CONFIG ---
+        // Số dư mặc định khoảng 3 Tỷ lẻ 
+        const DEFAULT_BALANCE = 3070628357.46;
+        const EXCHANGE_RATE = 26.67;
+        const STORAGE_KEY_BALANCE = 'huy_balance_v1';
+        const STORAGE_KEY_HISTORY = 'huy_history_v1';
+        const PENDING_DURATION = 30 * 1000; // 30 giây
+
+        // Các giao dịch mẫu cũ (Static data)
+        const STATIC_HISTORY = [
+            { id: 1, timeStart: "11:29:27 02/01/2026", timeEnd: "19:10:29 14/01/2026", amount: 63.05, unit: "USDT", status: "approved" },
+            { id: 2, timeStart: "11:17:57 28/12/2025", timeEnd: "19:10:29 14/01/2026", amount: 408.19, unit: "USDT", status: "approved" },
+            { id: 3, timeStart: "11:14:47 27/12/2025", timeEnd: "19:10:29 14/01/2026", amount: 155.87, unit: "USDT", status: "approved" },
+            { id: 4, timeStart: "08:30:15 20/12/2025", timeEnd: "19:10:29 14/01/2026", amount: 1250.00, unit: "USDT", status: "approved" }
+        ];
+
+        // --- 2. STATE MANAGEMENT ---
+        let currentBalanceVND = parseFloat(localStorage.getItem(STORAGE_KEY_BALANCE)) || DEFAULT_BALANCE;
+        let transactionHistory = JSON.parse(localStorage.getItem(STORAGE_KEY_HISTORY)) || STATIC_HISTORY;
+
+        // DOM Elements
+        const sidebarBalance = document.getElementById('sidebar-balance');
+        const helperText = document.getElementById('helper-text');
         const amountInput = document.getElementById('amount-input');
+        const currencySelect = document.getElementById('currency-select');
         const totalText = document.getElementById('total-text');
+        const tableBody = document.getElementById('history-table-body');
         const networkWrapper = document.getElementById('network-wrapper');
         const rateText = document.getElementById('rate-text');
         const amountUnit = document.getElementById('amount-unit');
         const penaltyFooterText = document.getElementById('penalty-footer-text');
-        
+        const errorMessage = document.getElementById('error-message');
+
+        // --- 3. UTILS ---
         function formatMoney(num) {
             return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
@@ -283,13 +254,25 @@
                    future.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
         }
 
-        // --- 2. UPDATE UI (Tự động cập nhật số dư và placeholder khi load) ---
-        function updateUI() {
-            document.getElementById('sidebar-balance').innerText = formatMoney(currentBalanceVND);
-            const helperText = document.getElementById('helper-text');
+        function saveState() {
+            localStorage.setItem(STORAGE_KEY_BALANCE, currentBalanceVND);
+            localStorage.setItem(STORAGE_KEY_HISTORY, JSON.stringify(transactionHistory));
+        }
+
+        function resetData() {
+            if(confirm('Bạn có chắc muốn reset dữ liệu về mặc định (3 Tỷ) không?')) {
+                localStorage.removeItem(STORAGE_KEY_BALANCE);
+                localStorage.removeItem(STORAGE_KEY_HISTORY);
+                location.reload();
+            }
+        }
+
+        // --- 4. RENDER FUNCTIONS ---
+        function renderUI() {
+            sidebarBalance.innerText = formatMoney(currentBalanceVND);
             
             if (currencySelect.value === 'USDT') {
-                let maxUSDT = currentBalanceVND / exchangeRate;
+                let maxUSDT = currentBalanceVND / EXCHANGE_RATE;
                 helperText.innerHTML = `<i class="fa-regular fa-circle-question text-[#1976d2] mr-1"></i> Số tiền có thể rút: ${formatMoney(maxUSDT)} USDT`;
                 amountInput.placeholder = `0.00 - ${formatMoney(maxUSDT)}`;
             } else {
@@ -298,21 +281,66 @@
             }
         }
 
-        // --- 3. INPUT EVENT ---
-        amountInput.addEventListener('input', function() {
-            const val = parseFloat(this.value) || 0;
-            if (currencySelect.value === 'USDT') {
-                totalText.innerText = `≈ ${formatMoney(val)} USDT`; 
-            } else {
-                totalText.innerText = `${formatMoney(val)} VND(k)`;
-            }
-        });
+        function renderTable() {
+            tableBody.innerHTML = '';
+            
+            // Render rows
+            transactionHistory.forEach(item => {
+                const row = document.createElement('tr');
+                row.className = "border-b border-gray-50 hover:bg-gray-50 " + (item.isNew ? "new-row" : "");
+                
+                // Logic hiển thị Status
+                let statusHTML = '';
+                if (item.status === 'pending') {
+                    statusHTML = `<span class="text-orange-500 font-medium text-[13px]">Đang xử lý</span>`;
+                } else {
+                    statusHTML = `<span class="text-[#4ade80] font-medium text-[13px]">Thông qua</span>`;
+                }
 
-        // --- 4. WITHDRAW LOGIC ---
+                row.innerHTML = `
+                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                        <div>Thời gian từ : ${item.timeStart}</div>
+                        <div>Thời gian kết thúc : ${item.timeEnd}</div>
+                    </td>
+                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                    <td class="py-4 text-center">-</td>
+                    <td class="py-4 text-center font-bold text-gray-800">${formatMoney(item.amount)} <span class="text-xs font-normal text-gray-400">${item.unit}</span></td>
+                    <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
+                    <td class="py-4 text-center">${statusHTML}</td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        // --- 5. LOGIC CHECK STATUS (AUTO APPROVE) ---
+        function checkPendingTransactions() {
+            const now = Date.now();
+            let hasChanged = false;
+
+            transactionHistory.forEach(item => {
+                if (item.status === 'pending') {
+                    if (now - item.timestamp >= PENDING_DURATION) {
+                        item.status = 'approved';
+                        hasChanged = true;
+                    }
+                }
+            });
+
+            if (hasChanged) {
+                saveState();
+                renderTable();
+            }
+        }
+        
+        // Chạy check mỗi 1 giây để cập nhật realtime
+        setInterval(checkPendingTransactions, 1000);
+
+        // --- 6. EVENT LISTENERS ---
+        
+        // Logic Rút Tiền
         document.getElementById('btn-confirm-withdraw').addEventListener('click', function() {
             const inputValue = parseFloat(amountInput.value);
             const currency = currencySelect.value;
-            const errorMessage = document.getElementById('error-message');
             
             if (!inputValue || inputValue <= 0) {
                 alert("Vui lòng nhập số tiền hợp lệ!");
@@ -321,50 +349,45 @@
                 return;
             }
 
-            let amountToDeductVND = (currency === 'USDT') ? inputValue * exchangeRate : inputValue;
+            let amountToDeductVND = (currency === 'USDT') ? inputValue * EXCHANGE_RATE : inputValue;
 
-            // Fix logic so sánh số thực
             if (amountToDeductVND > currentBalanceVND + 0.1) {
                 alert("Số dư không đủ!");
                 return;
             }
 
+            // 1. Trừ tiền
             currentBalanceVND -= amountToDeductVND;
-            updateUI();
-            addHistoryRow(inputValue, currency);
+
+            // 2. Tạo giao dịch mới
+            const newTransaction = {
+                id: Date.now(), // Unique ID
+                timestamp: Date.now(), // Mốc thời gian tạo để tính 30s
+                timeStart: getCurrentTime(),
+                timeEnd: getFutureTime(14),
+                amount: inputValue,
+                unit: currency,
+                status: 'pending', // Mặc định là pending
+                isNew: true
+            };
+
+            // Thêm vào đầu mảng
+            transactionHistory.unshift(newTransaction);
+
+            // 3. Lưu và render
+            saveState();
+            renderUI();
+            renderTable();
+
+            // 4. Reset Form & Show Popup
             document.getElementById('success-popup').classList.remove('hidden');
-            
-            // Reset Form sau khi rút
             amountInput.value = '';
             totalText.innerText = (currency === 'USDT') ? "≈ 0.00 USDT" : "0.00 VND(k)";
             amountInput.classList.remove('border-red-400', 'bg-red-50');
             errorMessage.classList.add('hidden');
         });
 
-        // --- 5. ADD HISTORY ROW ---
-        function addHistoryRow(amount, currency) {
-            const tbody = document.getElementById('history-table-body');
-            const row = document.createElement('tr');
-            row.className = "border-b border-gray-50 hover:bg-gray-50 new-row";
-            
-            const timeStart = getCurrentTime();
-            const timeEnd = getFutureTime(14);
-            
-            row.innerHTML = `
-                <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
-                    <div>Thời gian từ : ${timeStart}</div>
-                    <div>Thời gian kết thúc : ${timeEnd}</div>
-                </td>
-                <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
-                <td class="py-4 text-center">-</td>
-                <td class="py-4 text-center text-gray-800">${formatMoney(amount)} <span class="text-xs font-normal text-gray-400">${currency}</span></td>
-                <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
-                <td class="py-4 text-center text-orange-500 font-medium text-[13px]">Đang xử lý</td>
-            `;
-            tbody.insertBefore(row, tbody.firstChild);
-        }
-
-        // --- 6. TAB SWITCH LOGIC ---
+        // Tab Switch Logic
         currencySelect.addEventListener('change', function() {
             amountInput.value = '';
             totalText.innerText = this.value === 'USDT' ? "≈ 0.00 USDT" : "0.00 VND(k)";
@@ -375,7 +398,7 @@
                 amountInput.classList.add('border-red-400', 'bg-red-50');
                 amountInput.classList.remove('border-gray-200');
                 amountUnit.innerText = "VND(k)";
-                document.getElementById('error-message').classList.remove('hidden');
+                errorMessage.classList.remove('hidden');
                 penaltyFooterText.classList.remove('hidden');
             } else {
                 networkWrapper.classList.remove('hidden');
@@ -383,13 +406,23 @@
                 amountInput.classList.remove('border-red-400', 'bg-red-50');
                 amountInput.classList.add('border-gray-200');
                 amountUnit.innerText = "USDT";
-                document.getElementById('error-message').classList.add('hidden');
+                errorMessage.classList.add('hidden');
                 penaltyFooterText.classList.add('hidden');
             }
-            updateUI();
+            renderUI();
         });
 
-        // --- 7. OTHER EVENTS ---
+        // Input Calculate
+        amountInput.addEventListener('input', function() {
+            const val = parseFloat(this.value) || 0;
+            if (currencySelect.value === 'USDT') {
+                totalText.innerText = `≈ ${formatMoney(val)} USDT`; 
+            } else {
+                totalText.innerText = `${formatMoney(val)} VND(k)`;
+            }
+        });
+
+        // Show/Hide Section & Popup
         document.getElementById('btn-trigger').addEventListener('click', () => {
             const sec = document.getElementById('withdraw-section');
             sec.classList.remove('hidden');
@@ -401,8 +434,9 @@
             document.getElementById('success-popup').classList.add('hidden');
         });
 
-        // Chạy updateUI ngay khi tải trang để hiển thị đúng số tiền lớn
-        updateUI();
+        // --- INIT ---
+        renderUI();
+        renderTable();
     </script>
 </body>
 </html>
