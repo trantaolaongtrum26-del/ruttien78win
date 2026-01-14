@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giao diện Rút Tiền - Đầy đủ dữ liệu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Times New Roman', Times, serif;
+            background-color: #f8f9fa;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+        
+        input::-webkit-outer-spin-button,
+        input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        #withdraw-section { transition: all 0.3s ease-in-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        .animate-popup { animation: fadeIn 0.2s ease-out forwards; }
+        
+        /* Hiệu ứng dòng mới trong bảng */
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); background-color: #fffbeb; }
+            to { opacity: 1; transform: translateY(0); background-color: white; }
+        }
+        .new-row { animation: slideDown 0.5s ease-out forwards; }
+    </style>
+</head>
+<body class="bg-[#f8f9fa] h-screen flex overflow-hidden text-sm text-[#333]">
+
+    <aside class="w-[240px] bg-white flex flex-col border-r border-gray-200 h-full flex-shrink-0 z-10">
+        <div class="p-5 pb-2">
+            <h1 class="text-xl font-bold text-black mb-6 pl-1">15w1900</h1>
+            <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                <span class="text-gray-600">VND(k)</span>
+                <span id="sidebar-balance" class="text-black font-bold">70,628,357.46</span>
+            </div>
+            <div class="flex justify-between items-center py-3 border-b border-gray-100">
+                <div class="flex items-center gap-1">
+                    <span class="text-gray-600">Points</span>
+                    <i class="fa-regular fa-circle-question text-blue-500 text-xs"></i>
+                </div>
+                <span class="text-black font-bold">0</span>
+            </div>
+        </div>
+        
+        <nav class="flex-1 overflow-y-auto mt-2 px-2">
+            <ul class="space-y-1">
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-regular fa-user text-lg"></i></span><span class="text-[15px]">Tài khoản</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-crown text-gray-500 text-lg"></i></span><span class="text-[15px]">VIP</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-hand-holding-dollar rotate-90 text-lg"></i></span><span class="text-[15px]">Nạp tiền</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-blue-600 bg-white rounded-md"> <span class="w-8"><i class="fa-solid fa-hand-holding-dollar text-lg"></i></span><span class="text-[15px] font-medium">Rút tiền</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-user-group text-lg"></i></span><span class="text-[15px]">Giới thiệu bạn bè</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-gift text-lg"></i></span><span class="text-[15px]">Trung tâm phần thưởng</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-clipboard-list text-lg"></i></span><span class="text-[15px]">Nhật ký nhiệm vụ</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-clock-rotate-left text-lg"></i></span><span class="text-[15px]">Lịch sử trò chơi</span></a></li>
+                <li><a href="#" class="flex items-center px-4 py-3 text-gray-600 hover:text-black hover:bg-gray-50 rounded-md transition"><span class="w-8"><i class="fa-solid fa-receipt text-lg"></i></span><span class="text-[15px]">Giao dịch</span></a></li>
+            </ul>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto relative" id="main-scroll">
+        <div class="w-[96%] max-w-[1300px] mx-auto py-6">
+            
+            <div class="bg-white rounded shadow-[0_1px_3px_rgba(0,0,0,0.1)] mb-8">
+                <div class="flex justify-between items-center px-6 py-5 border-b border-gray-100">
+                    <h2 class="text-lg font-bold text-gray-800">Điều Kiện Rút Tiền</h2>
+                    <button class="text-gray-400 hover:text-blue-500 transition"><i class="fa-solid fa-arrows-rotate text-lg"></i></button>
+                </div>
+                
+                <div class="p-6">
+                    <div class="overflow-x-auto">
+                        <table class="w-full min-w-[900px]">
+                            <thead>
+                                <tr class="text-gray-500 text-[13px] border-b border-gray-100">
+                                    <th class="pb-4 text-center font-normal w-[28%]">Thời gian</th>
+                                    <th class="pb-4 text-center font-normal w-[20%]">Loại kiểm tra</th>
+                                    <th class="pb-4 text-center font-normal">Nạp tiền</th>
+                                    <th class="pb-4 text-center font-normal">Tiền Thưởng</th>
+                                    <th class="pb-4 text-center font-normal">Tiến độ kiểm toán <i class="fa-regular fa-circle-question ml-1 text-gray-400"></i></th>
+                                    <th class="pb-4 text-center font-normal">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody id="history-table-body" class="text-gray-700">
+                                
+                                <tr class="border-b border-gray-50 hover:bg-gray-50">
+                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                                        <div>Thời gian từ : 11:29:27 02/01/2026</div>
+                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
+                                    </td>
+                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                                    <td class="py-4 text-center">-</td>
+                                    <td class="py-4 text-center">63.05</td>
+                                    <td class="py-4 text-center text-gray-500 text-[13px]">60.000.000 / -</td>
+                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
+                                </tr>
+
+                                <tr class="border-b border-gray-50 hover:bg-gray-50">
+                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                                        <div>Thời gian từ : 11:17:57 28/12/2025</div>
+                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
+                                    </td>
+                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                                    <td class="py-4 text-center">-</td>
+                                    <td class="py-4 text-center">408.19</td>
+                                    <td class="py-4 text-center text-gray-500 text-[13px]">4,850.00 / -</td>
+                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
+                                </tr>
+
+                                <tr class="border-b border-gray-50 hover:bg-gray-50">
+                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                                        <div>Thời gian từ : 11:14:47 27/12/2025</div>
+                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
+                                    </td>
+                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                                    <td class="py-4 text-center">-</td>
+                                    <td class="py-4 text-center">155.87</td>
+                                    <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
+                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
+                                </tr>
+
+                                <tr class="border-b border-gray-50 hover:bg-gray-50">
+                                    <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                                        <div>Thời gian từ : 08:30:15 20/12/2025</div>
+                                        <div>Thời gian kết thúc : 19:10:29 14/01/2026</div>
+                                    </td>
+                                    <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                                    <td class="py-4 text-center">-</td>
+                                    <td class="py-4 text-center">1,250.00</td>
+                                    <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
+                                    <td class="py-4 text-center text-[#4ade80] font-medium text-[13px]">Thông qua</td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="flex justify-center mt-6 space-x-1">
+                        <button class="w-8 h-8 flex items-center justify-center rounded bg-[#e9ecef] text-gray-400"><i class="fa-solid fa-chevron-left text-[10px]"></i></button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded bg-[#1976d2] text-white font-medium shadow-sm text-[13px]">1</button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded bg-[#e9ecef] text-gray-400"><i class="fa-solid fa-chevron-right text-[10px]"></i></button>
+                    </div>
+
+                    <div class="mt-8">
+                        <button id="btn-trigger" class="w-full bg-[#1976d2] hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow-sm transition duration-200 text-[15px]">
+                            Rút tiền
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="withdraw-section" class="hidden grid-cols-1 lg:grid-cols-2 gap-8 pb-10">
+                <div>
+                    <h3 class="text-lg font-bold text-black mb-4 pl-1">Phí phạt</h3>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-white p-4 rounded shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-col items-center relative h-60 justify-center">
+                            <span class="absolute top-4 right-4 text-[11px] text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full">Khấu trừ</span>
+                            <div class="mb-4 text-gray-400"><i class="fa-solid fa-coins text-4xl"></i></div>
+                            <p class="text-gray-700 font-medium mb-4">Điều kiện khuyến mãi</p>
+                            <div class="w-full border-t border-gray-100 my-2"></div>
+                            <div class="text-center mt-2">
+                                <p class="text-xs text-gray-500 mb-1">Khấu trừ tổng điều kiện</p>
+                                <p class="text-xl font-bold text-gray-800">0.00</p>
+                            </div>
+                        </div>
+                        <div class="bg-white p-4 rounded shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-gray-100 flex flex-col items-center relative h-60 justify-center">
+                            <span class="absolute top-4 right-4 text-[11px] text-gray-500 border border-gray-200 px-2 py-0.5 rounded-full">Khấu trừ</span>
+                            <div class="mb-4 text-gray-400"><i class="fa-solid fa-tags text-4xl"></i></div>
+                            <p class="text-gray-700 font-medium mb-4">Điều Kiện Chung</p>
+                            <div class="w-full border-t border-gray-100 my-2"></div>
+                            <div class="text-center mt-2">
+                                <p class="text-xs text-gray-500 mb-1">Khấu trừ tổng điều kiện</p>
+                                <p class="text-xl font-bold text-gray-800">0.00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p id="penalty-footer-text" class="hidden text-center text-gray-500 mt-6 text-[13px]">Tổng số tiền khấu trừ là số chẵn</p>
+                </div>
+
+                <div>
+                    <h3 class="text-lg font-bold text-black mb-4 pl-1">Rút tiền</h3>
+                    <div class="bg-white p-6 rounded shadow-[0_1px_3px_rgba(0,0,0,0.1)] border border-gray-100">
+                        
+                        <div class="mb-5">
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2">Đơn vị tiền tệ rút tiền</label>
+                            <div class="relative">
+                                <select id="currency-select" class="block w-full bg-white border border-gray-200 text-gray-800 py-2.5 px-3 pr-8 rounded focus:outline-none focus:border-blue-500 appearance-none font-normal text-[14px]">
+                                    <option value="USDT">USDT</option>
+                                    <option value="VND(k)">VND(k)</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#1976d2]"><i class="fa-solid fa-caret-down"></i></div>
+                            </div>
+                            <p id="rate-text" class="text-[12px] text-gray-500 mt-2"><i class="fa-regular fa-circle-question text-[#1976d2] mr-1"></i> tỉ lệ : 1 USDT = 26.67 VND(k)</p>
+                        </div>
+
+                        <div id="network-wrapper" class="mb-5">
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2">mạng lưới</label>
+                            <div class="relative">
+                                <select class="block w-full bg-white border border-gray-200 text-gray-800 py-2.5 px-3 pr-8 rounded focus:outline-none focus:border-blue-500 appearance-none font-normal text-[14px]">
+                                    <option>TRC20</option>
+                                </select>
+                                <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#1976d2]"><i class="fa-solid fa-caret-down"></i></div>
+                            </div>
+                        </div>
+
+                        <div class="mb-2">
+                            <label class="block text-[13px] font-bold text-gray-700 mb-2"><span class="text-red-500 mr-1">*</span>Số tiền rút</label>
+                            <div class="relative">
+                                <input id="amount-input" type="number" step="0.01" placeholder="0.00 - 286.03" class="block w-full border border-gray-200 py-2.5 px-3 rounded focus:outline-none focus:border-blue-500 text-[14px] placeholder-gray-400">
+                                <span id="amount-unit" class="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-500 text-[13px]">USDT</span>
+                            </div>
+                            <p id="helper-text" class="text-[12px] text-gray-500 mt-2"><i class="fa-regular fa-circle-question text-[#1976d2] mr-1"></i> Số tiền có thể rút: 286.03 USDT</p>
+                            <p id="error-message" class="hidden text-[12px] text-red-500 mt-1 flex items-center"><i class="fa-solid fa-circle-exclamation mr-1"></i> Bắt buộc có</p>
+                        </div>
+
+                        <div class="flex justify-between items-center mt-6 mb-4">
+                            <span class="text-gray-600 text-[14px]">Số Tiền Thực Rút</span>
+                            <span id="total-text" class="text-[#1976d2] text-xl font-medium">≈ 0.00 USDT</span>
+                        </div>
+
+                        <button id="btn-confirm-withdraw" class="w-full bg-[#90caf9] text-white font-bold py-3 rounded shadow-sm mb-4 cursor-pointer hover:bg-blue-400 transition text-[15px]">
+                            Rút tiền
+                        </button>
+
+                        <div class="flex gap-2 text-[12px] text-gray-500 leading-relaxed">
+                            <i class="fa-regular fa-circle-question text-[#1976d2] mt-0.5"></i>
+                            <p>Bạn đang rút tiền lần thứ 1, Số lần rút tối đa trong ngày là 100 lần . Hãy chú ý số lần rút để đảm bảo bạn có thể rút được nhiều tiền hơn</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="success-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+            <div class="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full text-center animate-popup">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <i class="fa-solid fa-check text-3xl text-green-500"></i>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">Thành Công!</h3>
+                <p class="text-gray-600 mb-6">Yêu cầu rút tiền của bạn đã được gửi và đang chờ xử lý.</p>
+                <button id="btn-close-popup" class="bg-[#1976d2] text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full font-medium">Đóng</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // --- 1. CONFIG & UTILS ---
+        let currentBalanceVND = 70628357.46;
+        const exchangeRate = 26.67;
+        const currencySelect = document.getElementById('currency-select');
+        const amountInput = document.getElementById('amount-input');
+        const totalText = document.getElementById('total-text');
+        
+        function formatMoney(num) {
+            return num.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function getCurrentTime() {
+            const now = new Date();
+            return now.toLocaleTimeString('en-GB', { hour12: false }) + ' ' + 
+                   now.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+        
+        function getFutureTime(days) {
+            const future = new Date();
+            future.setDate(future.getDate() + days);
+            return future.toLocaleTimeString('en-GB', { hour12: false }) + ' ' + 
+                   future.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        }
+
+        // --- 2. UPDATE UI ---
+        function updateUI() {
+            document.getElementById('sidebar-balance').innerText = formatMoney(currentBalanceVND);
+            const helperText = document.getElementById('helper-text');
+            
+            if (currencySelect.value === 'USDT') {
+                let maxUSDT = currentBalanceVND / exchangeRate;
+                helperText.innerHTML = `<i class="fa-regular fa-circle-question text-[#1976d2] mr-1"></i> Số tiền có thể rút: ${formatMoney(maxUSDT)} USDT`;
+                amountInput.placeholder = `0.00 - ${formatMoney(maxUSDT)}`;
+            } else {
+                helperText.innerHTML = `<i class="fa-regular fa-circle-question text-[#1976d2] mr-1"></i> Số tiền có thể rút: ${formatMoney(currentBalanceVND)} VND(k)`;
+                amountInput.placeholder = `0.00 - ${formatMoney(currentBalanceVND)}`;
+            }
+        }
+
+        // --- 3. INPUT EVENT ---
+        amountInput.addEventListener('input', function() {
+            const val = parseFloat(this.value) || 0;
+            if (currencySelect.value === 'USDT') {
+                totalText.innerText = `≈ ${formatMoney(val)} USDT`; 
+            } else {
+                totalText.innerText = `${formatMoney(val)} VND(k)`;
+            }
+        });
+
+        // --- 4. WITHDRAW LOGIC ---
+        document.getElementById('btn-confirm-withdraw').addEventListener('click', function() {
+            const inputValue = parseFloat(amountInput.value);
+            const currency = currencySelect.value;
+            const errorMessage = document.getElementById('error-message');
+            
+            if (!inputValue || inputValue <= 0) {
+                alert("Vui lòng nhập số tiền hợp lệ!");
+                amountInput.classList.add('border-red-400', 'bg-red-50');
+                errorMessage.classList.remove('hidden');
+                return;
+            }
+
+            let amountToDeductVND = (currency === 'USDT') ? inputValue * exchangeRate : inputValue;
+
+            if (amountToDeductVND > currentBalanceVND + 0.01) {
+                alert("Số dư không đủ!");
+                return;
+            }
+
+            currentBalanceVND -= amountToDeductVND;
+            updateUI();
+            addHistoryRow(inputValue, currency);
+            document.getElementById('success-popup').classList.remove('hidden');
+            
+            amountInput.value = '';
+            totalText.innerText = (currency === 'USDT') ? "≈ 0.00 USDT" : "0.00 VND(k)";
+            amountInput.classList.remove('border-red-400', 'bg-red-50');
+            errorMessage.classList.add('hidden');
+        });
+
+        // --- 5. ADD HISTORY ROW ---
+        function addHistoryRow(amount, currency) {
+            const tbody = document.getElementById('history-table-body');
+            const row = document.createElement('tr');
+            row.className = "border-b border-gray-50 hover:bg-gray-50 new-row";
+            
+            const timeStart = getCurrentTime();
+            const timeEnd = getFutureTime(14);
+            
+            row.innerHTML = `
+                <td class="py-4 px-2 text-center text-[13px] text-gray-600 leading-relaxed">
+                    <div>Thời gian từ : ${timeStart}</div>
+                    <div>Thời gian kết thúc : ${timeEnd}</div>
+                </td>
+                <td class="py-4 text-center text-[13px]">Hoàn trả ngay lập tức</td>
+                <td class="py-4 text-center">-</td>
+                <td class="py-4 text-center text-gray-800">${formatMoney(amount)} <span class="text-xs font-normal text-gray-400">${currency}</span></td>
+                <td class="py-4 text-center text-gray-500 text-[13px]">0.00 / -</td>
+                <td class="py-4 text-center text-orange-500 font-medium text-[13px]">Đang xử lý</td>
+            `;
+            tbody.insertBefore(row, tbody.firstChild);
+        }
+
+        // --- 6. TAB SWITCH LOGIC ---
+        const networkWrapper = document.getElementById('network-wrapper');
+        const rateText = document.getElementById('rate-text');
+        const amountUnit = document.getElementById('amount-unit');
+        const penaltyFooterText = document.getElementById('penalty-footer-text');
+
+        currencySelect.addEventListener('change', function() {
+            amountInput.value = '';
+            totalText.innerText = this.value === 'USDT' ? "≈ 0.00 USDT" : "0.00 VND(k)";
+            
+            if (this.value === 'VND(k)') {
+                networkWrapper.classList.add('hidden');
+                rateText.classList.add('hidden');
+                amountInput.classList.add('border-red-400', 'bg-red-50');
+                amountInput.classList.remove('border-gray-200');
+                amountUnit.innerText = "VND(k)";
+                document.getElementById('error-message').classList.remove('hidden');
+                penaltyFooterText.classList.remove('hidden');
+            } else {
+                networkWrapper.classList.remove('hidden');
+                rateText.classList.remove('hidden');
+                amountInput.classList.remove('border-red-400', 'bg-red-50');
+                amountInput.classList.add('border-gray-200');
+                amountUnit.innerText = "USDT";
+                document.getElementById('error-message').classList.add('hidden');
+                penaltyFooterText.classList.add('hidden');
+            }
+            updateUI();
+        });
+
+        // --- 7. OTHER EVENTS ---
+        document.getElementById('btn-trigger').addEventListener('click', () => {
+            const sec = document.getElementById('withdraw-section');
+            sec.classList.remove('hidden');
+            sec.classList.add('grid');
+            setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+        });
+        
+        document.getElementById('btn-close-popup').addEventListener('click', () => {
+            document.getElementById('success-popup').classList.add('hidden');
+        });
+    </script>
+</body>
+</html>
