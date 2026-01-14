@@ -21,12 +21,25 @@
         
         #withdraw-section { transition: all 0.3s ease-in-out; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: scale(0.95); }
-            to { opacity: 1; transform: scale(1); }
+        /* Animation cho Popup */
+        .modal-enter {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        .animate-popup { animation: fadeIn 0.2s ease-out forwards; }
+        .modal-enter-active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transform: scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .modal-enter-active .modal-content {
+            transform: scale(1);
+        }
         
+        /* Hiệu ứng dòng mới */
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); background-color: #fffbeb; }
             to { opacity: 1; transform: translateY(0); background-color: white; }
@@ -190,28 +203,30 @@
             </div>
         </div>
         
-        <div id="success-popup" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-            <div class="bg-white rounded-lg shadow-2xl p-8 max-w-sm w-full text-center animate-popup">
-                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fa-solid fa-check text-3xl text-green-500"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Thành Công!</h3>
-                <p class="text-gray-600 mb-6">Yêu cầu rút tiền của bạn đã được gửi và đang chờ xử lý.</p>
-                <button id="btn-close-popup" class="bg-[#1976d2] text-white px-6 py-2 rounded hover:bg-blue-700 transition w-full font-medium">Đóng</button>
+        <div id="notification-modal" class="modal-enter fixed inset-0 bg-black/60 backdrop-blur-[2px] z-50 flex items-center justify-center">
+            <div class="bg-white rounded-xl shadow-2xl p-8 max-w-[360px] w-full text-center modal-content" id="notification-box">
+                <div id="notify-icon" class="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl"></div>
+                
+                <h3 id="notify-title" class="text-xl font-bold text-gray-800 mb-2">Tiêu đề</h3>
+                <p id="notify-message" class="text-gray-600 mb-6 text-[14px] leading-relaxed">Nội dung thông báo</p>
+                
+                <button id="notify-btn" class="w-full py-2.5 rounded-lg font-bold transition-all text-white shadow-md text-[14px]">
+                    Đóng
+                </button>
             </div>
         </div>
+
     </main>
 
     <script>
         // --- 1. CONFIG ---
-        // Số dư mặc định khoảng 3 Tỷ lẻ 
-        const DEFAULT_BALANCE = 3070628357.46;
+        const DEFAULT_BALANCE = 3070628357.46; // 3 Tỷ lẻ
         const EXCHANGE_RATE = 26.67;
-        const STORAGE_KEY_BALANCE = 'huy_balance_v1';
-        const STORAGE_KEY_HISTORY = 'huy_history_v1';
-        const PENDING_DURATION = 30 * 1000; // 30 giây
+        const STORAGE_KEY_BALANCE = 'huy_balance_v3';
+        const STORAGE_KEY_HISTORY = 'huy_history_v3';
+        const PENDING_DURATION = 30 * 1000; // 30 Giây
 
-        // Các giao dịch mẫu cũ (Static data)
+        // Lịch sử mẫu
         const STATIC_HISTORY = [
             { id: 1, timeStart: "11:29:27 02/01/2026", timeEnd: "19:10:29 14/01/2026", amount: 63.05, unit: "USDT", status: "approved" },
             { id: 2, timeStart: "11:17:57 28/12/2025", timeEnd: "19:10:29 14/01/2026", amount: 408.19, unit: "USDT", status: "approved" },
@@ -234,7 +249,13 @@
         const rateText = document.getElementById('rate-text');
         const amountUnit = document.getElementById('amount-unit');
         const penaltyFooterText = document.getElementById('penalty-footer-text');
-        const errorMessage = document.getElementById('error-message');
+        
+        // Modal Elements
+        const modal = document.getElementById('notification-modal');
+        const iconEl = document.getElementById('notify-icon');
+        const titleEl = document.getElementById('notify-title');
+        const msgEl = document.getElementById('notify-message');
+        const btnEl = document.getElementById('notify-btn');
 
         // --- 3. UTILS ---
         function formatMoney(num) {
@@ -267,7 +288,39 @@
             }
         }
 
-        // --- 4. RENDER FUNCTIONS ---
+        // --- 4. NOTIFICATION SYSTEM ---
+        function showNotification(type, title, message) {
+            // Setup content
+            titleEl.innerText = title;
+            msgEl.innerText = message;
+            
+            // Setup style based on type
+            if (type === 'success') {
+                iconEl.className = "w-16 h-16 bg-green-100 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                iconEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+                btnEl.className = "w-full py-2.5 rounded-lg font-bold transition-all text-white shadow-md bg-[#1976d2] hover:bg-blue-700 shadow-blue-200 text-[14px]";
+                btnEl.innerText = "Tuyệt vời";
+            } else if (type === 'error') {
+                iconEl.className = "w-16 h-16 bg-red-100 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                iconEl.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+                btnEl.className = "w-full py-2.5 rounded-lg font-bold transition-all text-white shadow-md bg-red-500 hover:bg-red-600 shadow-red-200 text-[14px]";
+                btnEl.innerText = "Đã hiểu";
+            } else if (type === 'warning') {
+                iconEl.className = "w-16 h-16 bg-yellow-100 text-yellow-500 rounded-full flex items-center justify-center mx-auto mb-4 text-3xl";
+                iconEl.innerHTML = '<i class="fa-solid fa-exclamation"></i>';
+                btnEl.className = "w-full py-2.5 rounded-lg font-bold transition-all text-white shadow-md bg-yellow-500 hover:bg-yellow-600 shadow-yellow-200 text-[14px]";
+                btnEl.innerText = "Kiểm tra lại";
+            }
+
+            // Show Modal
+            modal.classList.add('modal-enter-active');
+        }
+
+        function closeNotification() {
+            modal.classList.remove('modal-enter-active');
+        }
+
+        // --- 5. RENDER FUNCTIONS ---
         function renderUI() {
             sidebarBalance.innerText = formatMoney(currentBalanceVND);
             
@@ -284,12 +337,10 @@
         function renderTable() {
             tableBody.innerHTML = '';
             
-            // Render rows
             transactionHistory.forEach(item => {
                 const row = document.createElement('tr');
                 row.className = "border-b border-gray-50 hover:bg-gray-50 " + (item.isNew ? "new-row" : "");
                 
-                // Logic hiển thị Status
                 let statusHTML = '';
                 if (item.status === 'pending') {
                     statusHTML = `<span class="text-orange-500 font-medium text-[13px]">Đang xử lý</span>`;
@@ -312,7 +363,7 @@
             });
         }
 
-        // --- 5. LOGIC CHECK STATUS (AUTO APPROVE) ---
+        // --- 6. LOGIC CHECK STATUS (AUTO APPROVE) ---
         function checkPendingTransactions() {
             const now = Date.now();
             let hasChanged = false;
@@ -331,19 +382,18 @@
                 renderTable();
             }
         }
-        
-        // Chạy check mỗi 1 giây để cập nhật realtime
         setInterval(checkPendingTransactions, 1000);
 
-        // --- 6. EVENT LISTENERS ---
+        // --- 7. EVENT LISTENERS ---
         
         // Logic Rút Tiền
         document.getElementById('btn-confirm-withdraw').addEventListener('click', function() {
             const inputValue = parseFloat(amountInput.value);
             const currency = currencySelect.value;
+            const errorMessage = document.getElementById('error-message');
             
             if (!inputValue || inputValue <= 0) {
-                alert("Vui lòng nhập số tiền hợp lệ!");
+                showNotification('warning', 'Thiếu Thông Tin', 'Vui lòng nhập số tiền hợp lệ để tiếp tục.');
                 amountInput.classList.add('border-red-400', 'bg-red-50');
                 errorMessage.classList.remove('hidden');
                 return;
@@ -352,7 +402,7 @@
             let amountToDeductVND = (currency === 'USDT') ? inputValue * EXCHANGE_RATE : inputValue;
 
             if (amountToDeductVND > currentBalanceVND + 0.1) {
-                alert("Số dư không đủ!");
+                showNotification('error', 'Số Dư Không Đủ', 'Tài khoản của bạn không đủ để thực hiện giao dịch này.');
                 return;
             }
 
@@ -361,26 +411,26 @@
 
             // 2. Tạo giao dịch mới
             const newTransaction = {
-                id: Date.now(), // Unique ID
-                timestamp: Date.now(), // Mốc thời gian tạo để tính 30s
+                id: Date.now(),
+                timestamp: Date.now(),
                 timeStart: getCurrentTime(),
                 timeEnd: getFutureTime(14),
                 amount: inputValue,
                 unit: currency,
-                status: 'pending', // Mặc định là pending
+                status: 'pending',
                 isNew: true
             };
 
-            // Thêm vào đầu mảng
+            // 3. Cập nhật và Lưu
             transactionHistory.unshift(newTransaction);
-
-            // 3. Lưu và render
             saveState();
             renderUI();
             renderTable();
 
-            // 4. Reset Form & Show Popup
-            document.getElementById('success-popup').classList.remove('hidden');
+            // 4. Thông báo thành công
+            showNotification('success', 'Thành Công!', 'Yêu cầu rút tiền của bạn đã được gửi và đang chờ xử lý.');
+            
+            // Reset Form
             amountInput.value = '';
             totalText.innerText = (currency === 'USDT') ? "≈ 0.00 USDT" : "0.00 VND(k)";
             amountInput.classList.remove('border-red-400', 'bg-red-50');
@@ -398,7 +448,7 @@
                 amountInput.classList.add('border-red-400', 'bg-red-50');
                 amountInput.classList.remove('border-gray-200');
                 amountUnit.innerText = "VND(k)";
-                errorMessage.classList.remove('hidden');
+                document.getElementById('error-message').classList.remove('hidden');
                 penaltyFooterText.classList.remove('hidden');
             } else {
                 networkWrapper.classList.remove('hidden');
@@ -406,7 +456,7 @@
                 amountInput.classList.remove('border-red-400', 'bg-red-50');
                 amountInput.classList.add('border-gray-200');
                 amountUnit.innerText = "USDT";
-                errorMessage.classList.add('hidden');
+                document.getElementById('error-message').classList.add('hidden');
                 penaltyFooterText.classList.add('hidden');
             }
             renderUI();
@@ -422,7 +472,7 @@
             }
         });
 
-        // Show/Hide Section & Popup
+        // Toggle Section
         document.getElementById('btn-trigger').addEventListener('click', () => {
             const sec = document.getElementById('withdraw-section');
             sec.classList.remove('hidden');
@@ -430,15 +480,15 @@
             setTimeout(() => sec.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
         });
         
-        document.getElementById('btn-close-popup').addEventListener('click', () => {
-            document.getElementById('success-popup').classList.add('hidden');
+        // Close Modal Events
+        btnEl.addEventListener('click', closeNotification);
+        modal.addEventListener('click', (e) => {
+            if(e.target === modal) closeNotification();
         });
 
-        // --- INIT ---
+        // Init
         renderUI();
         renderTable();
     </script>
 </body>
 </html>
-
-
